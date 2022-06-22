@@ -5,3 +5,5 @@ edition = "2021"
 
 [dependencies]
 actix-web = "4.0.1"
+bollard = "0.9"
+dockertest = "0.3.0"
