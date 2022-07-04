@@ -1,6 +1,7 @@
 use actix_web::{web, App, HttpServer, Responder};
 use serde::Serialize;
 
+mod docker;
 #[derive(Serialize)]
 struct Box {
     name: String,
@@ -17,7 +18,7 @@ async fn get_boxes()  -> impl Responder {
     return web::Json(Box{name:String::from("test"),instances:1});
 }
 
-async fn check_server_health() -> impl Responder{
+async fn check_server_health() -> impl Responder {
     return web::Json(Status{boxes:true,used_instances: 0, available_instances: 0});
 }
 
