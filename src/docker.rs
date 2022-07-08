@@ -114,5 +114,5 @@ pub async fn disconnect_docker_network(docker: &Docker, network_name: &str, cont
     docker
         .disconnect_network(network_name, config)
         .await
-        .expect("failed to disconnnect from network");
+        .expect("failed to disconnect from network");
 }
