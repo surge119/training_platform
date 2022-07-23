@@ -1,5 +1,6 @@
 use bollard::container::RemoveContainerOptions;
 use bollard::container::StartContainerOptions;
+use bollard::container::RestartContainerOptions;
 use bollard::container::{Config, CreateContainerOptions};
 use bollard::models::IpamConfig;
 use bollard::models::{EndpointIpamConfig, EndpointSettings, Ipam};
@@ -52,6 +53,17 @@ pub async fn stop_docker_container(docker: &Docker, container_name: &str) {
         .stop_container(container_name, None)
         .await
         .expect("container failed to stop");
+}
+
+pub async fn reset_docker_container(docker: &Docker, container_name: &str) {
+    let options = Some(RestartContainerOptions{
+        t: 0,
+    });
+    
+    docker
+        .restart_container(container_name, options)
+        .await
+        .expect("container failed to reset");
 }
 
 pub async fn start_docker_network(
