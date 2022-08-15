@@ -1,7 +1,11 @@
+extern crate core;
+
 use actix_web::{web, App, HttpServer, Responder};
 use serde::Serialize;
 
+mod container;
 mod docker;
+mod logger;
 
 #[derive(Serialize)]
 struct Box {
@@ -32,16 +36,21 @@ async fn check_server_health() -> impl Responder {
     });
 }
 
-#[actix_web::main]
-async fn main() -> std::io::Result<()> {
-    HttpServer::new(|| {
-        App::new().service(
-            web::scope("/api")
-                .route("/boxes", web::get().to(get_boxes))
-                .route("/status", web::get().to(check_server_health)),
-        )
-    })
-    .bind(("127.0.0.1", 8080))?
-    .run()
-    .await
+fn main() {
+    let containers: container::Containers = container::init_containers();
+    println!("{:?}", containers)
 }
+
+// #[actix_web::main]
+// async fn main() -> std::io::Result<()> {
+//     HttpServer::new(|| {
+//         App::new().service(
+//             web::scope("/api")
+//                 .route("/boxes", web::get().to(get_boxes))
+//                 .route("/status", web::get().to(check_server_health)),
+//         )
+//     })
+//     .bind(("127.0.0.1", 8080))?
+//     .run()
+//     .await
+// }
