@@ -1,15 +1,58 @@
+use std::default::Default;
+use std::fs::File;
+use std::io::Read;
+use std::path;
+use actix_web::dev::ResourcePath;
+use actix_web::web::Path;
+
+use bollard::container::{Config, CreateContainerOptions};
 use bollard::container::RemoveContainerOptions;
 use bollard::container::StartContainerOptions;
-use bollard::container::{Config, CreateContainerOptions};
-use bollard::models::IpamConfig;
+use bollard::Docker;
+use bollard::image::BuildImageOptions;
 use bollard::models::{EndpointIpamConfig, EndpointSettings, Ipam};
+use bollard::models::IpamConfig;
 use bollard::network::ConnectNetworkOptions;
 use bollard::network::CreateNetworkOptions;
 use bollard::network::DisconnectNetworkOptions;
-use bollard::Docker;
 
-use std::default::Default;
+pub struct DockerController {
+    docker_daemon: Docker,
+}
 
+impl DockerController {
+    pub fn new() -> DockerController {
+        DockerController {
+            docker_daemon: Docker::connect_with_socket_defaults().expect("Docker daemon failed to connect. Check if Docker is running")
+        }
+    }
+
+    fn get_tar(path: &str) -> Vec<u8> {
+        let mut file: File = File::open(path).unwrap();
+        let mut contents: Vec<u8>  = Vec::new();
+        file.read_to_end(&mut contents).unwrap();
+        return contents;
+    }
+
+    /// Start a docker container
+    pub async fn start_docker_container(&self, container_name: &str) {
+        self.docker_daemon
+            .start_container(container_name, None::<StartContainerOptions<String>>)
+            .await
+            .expect("container failed to start");
+    }
+
+    //was able to test by running docker run -t -d IMAGENAME and then running this function
+    /// Stop a docker container
+    pub async fn stop_docker_container(&self, container_name: &str) {
+        self.docker_daemon
+            .stop_container(container_name, None)
+            .await
+            .expect("container failed to stop");
+    }
+}
+
+// TODO: Determine if these functions will be used
 /// Create a new docker container
 pub async fn create_docker_container(docker: &Docker, image_name: &str, container_name: &str) {
     let options = Some(CreateContainerOptions {
@@ -38,20 +81,6 @@ pub async fn remove_docker_container(docker: &Docker, container_name: &str) {
         .remove_container(container_name, options)
         .await
         .expect("container failed to be removed");
-}
-
-pub async fn start_docker_container(docker: &Docker, container_name: &str) {
-    docker
-        .start_container(container_name, None::<StartContainerOptions<String>>)
-        .await
-        .expect("container failed to start");
-}
-//was able to test by running docker run -t -d IMAGENAME and then running this function
-pub async fn stop_docker_container(docker: &Docker, container_name: &str) {
-    docker
-        .stop_container(container_name, None)
-        .await
-        .expect("container failed to stop");
 }
 
 pub async fn start_docker_network(
