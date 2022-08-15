@@ -2,9 +2,9 @@ use std::default::Default;
 use std::fs::File;
 use std::io::Read;
 use std::path;
+
 use actix_web::dev::ResourcePath;
 use actix_web::web::Path;
-
 use bollard::container::{Config, CreateContainerOptions};
 use bollard::container::RemoveContainerOptions;
 use bollard::container::StartContainerOptions;
@@ -16,6 +16,7 @@ use bollard::network::ConnectNetworkOptions;
 use bollard::network::CreateNetworkOptions;
 use bollard::network::DisconnectNetworkOptions;
 
+#[derive(Debug)]
 pub struct DockerController {
     docker_daemon: Docker,
 }
@@ -25,13 +26,6 @@ impl DockerController {
         DockerController {
             docker_daemon: Docker::connect_with_socket_defaults().expect("Docker daemon failed to connect. Check if Docker is running")
         }
-    }
-
-    fn get_tar(path: &str) -> Vec<u8> {
-        let mut file: File = File::open(path).unwrap();
-        let mut contents: Vec<u8>  = Vec::new();
-        file.read_to_end(&mut contents).unwrap();
-        return contents;
     }
 
     /// Start a docker container

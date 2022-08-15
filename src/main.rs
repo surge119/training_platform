@@ -36,9 +36,9 @@ async fn check_server_health() -> impl Responder {
     });
 }
 
-#[tokio::main]
-async fn main() {
-    container::init_containers().await;
+fn main() {
+    let containers: container::Containers = container::init_containers();
+    println!("{:?}", containers)
 }
 
 // #[actix_web::main]
