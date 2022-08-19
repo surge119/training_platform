@@ -1,0 +1,1 @@
+Plugin that sends internal requests to the Rust Server to manage containers.
