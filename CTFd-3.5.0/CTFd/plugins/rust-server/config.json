@@ -1,0 +1,4 @@
+{
+    "name": "Rust Internal API Connector",
+    "route": "/admin/rust"
+}

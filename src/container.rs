@@ -5,29 +5,29 @@ use std::fs::{DirEntry, File, ReadDir};
 use std::io::Read;
 use std::path::{Path, PathBuf};
 
-use serde::Deserialize;
+use serde::{Serialize,Deserialize};
 use serde_json;
 
 use crate::docker;
 use crate::docker::DockerController;
 
 /// Struct for all of the containers and the docker daemon
-#[derive(Debug)]
+#[derive(Debug,Clone)]
 pub struct Containers {
-    docker_controller: DockerController,
-    networks: HashMap<String, Network>,
+    pub docker_controller: DockerController,
+    pub networks: HashMap<String, Network>,
 }
 
 /// Struct that represents a docker network - read in from json file
-#[derive(Deserialize, Debug)]
-struct Network {
-    labs: HashMap<String, Machine>,
+#[derive(Deserialize, Debug,Clone,Serialize)]
+pub struct Network {
+    pub labs: HashMap<String, Machine>,
     subnet: String,
 }
 
 /// Struct that represents a docker machine - used by Network
-#[derive(Deserialize, Debug)]
-struct Machine {
+#[derive(Deserialize, Debug,Clone,Serialize)]
+pub struct Machine {
     container_name: String,
     ip: String,
     path: String,

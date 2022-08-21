@@ -16,7 +16,7 @@ use bollard::network::ConnectNetworkOptions;
 use bollard::network::CreateNetworkOptions;
 use bollard::network::DisconnectNetworkOptions;
 
-#[derive(Debug)]
+#[derive(Debug,Clone)]
 pub struct DockerController {
     docker_daemon: Docker,
 }
