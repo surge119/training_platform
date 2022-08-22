@@ -5,7 +5,7 @@ use std::path;
 
 use actix_web::dev::ResourcePath;
 use actix_web::web::Path;
-use bollard::container::{Config, CreateContainerOptions};
+use bollard::container::{Config, CreateContainerOptions, RestartContainerOptions};
 use bollard::container::RemoveContainerOptions;
 use bollard::container::StartContainerOptions;
 use bollard::Docker;
@@ -16,7 +16,7 @@ use bollard::network::ConnectNetworkOptions;
 use bollard::network::CreateNetworkOptions;
 use bollard::network::DisconnectNetworkOptions;
 
-#[derive(Debug,Clone)]
+#[derive(Debug, Clone)]
 pub struct DockerController {
     docker_daemon: Docker,
 }
@@ -44,64 +44,18 @@ impl DockerController {
             .await
             .expect("container failed to stop");
     }
-}
 
-// TODO: Determine if these functions will be used
-/// Create a new docker container
-pub async fn create_docker_container(docker: &Docker, image_name: &str, container_name: &str) {
-    let options = Some(CreateContainerOptions {
-        name: container_name,
-    });
+    /// Reset a docker container
+    pub async fn reset_docker_container(docker: &Docker, container_name: &str) {
+        let options = Some(RestartContainerOptions{
+            t: 0,
+        });
 
-    let config = Config {
-        image: Some(image_name),
-        ..Default::default()
-    };
-
-    docker
-        .create_container(options, config)
-        .await
-        .expect("container failed to be created");
-}
-
-/// Remove an existing docker container
-pub async fn remove_docker_container(docker: &Docker, container_name: &str) {
-    let options = Some(RemoveContainerOptions {
-        force: true,
-        ..Default::default()
-    });
-
-    docker
-        .remove_container(container_name, options)
-        .await
-        .expect("container failed to be removed");
-}
-
-pub async fn start_docker_network(
-    docker: &Docker,
-    network_name: &str,
-    subnet: String,
-    is_attachable: bool,
-) {
-    let ipam = IpamConfig {
-        subnet: Some(subnet),
-        ..Default::default()
-    };
-    let ipam_configs = vec![ipam];
-    let config = CreateNetworkOptions {
-        name: network_name,
-        ipam: Ipam {
-            config: Some(ipam_configs),
-            ..Default::default()
-        },
-        attachable: is_attachable,
-        ..Default::default()
-    };
-
-    docker
-        .create_network(config)
-        .await
-        .expect("network failed to start");
+        docker
+            .restart_container(container_name, options)
+            .await
+            .expect("container failed to reset");
+    }
 }
 
 //docker container must be running for this to work
