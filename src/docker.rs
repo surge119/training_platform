@@ -29,32 +29,37 @@ impl DockerController {
     }
 
     /// Start a docker container
-    pub async fn start_docker_container(&self, container_name: &str) {
-        self.docker_daemon
+    pub async fn start_docker_container(&self, container_name: &str) -> Result<(), String> {
+        match self.docker_daemon
             .start_container(container_name, None::<StartContainerOptions<String>>)
-            .await
-            .expect("container failed to start");
+            .await {
+            Ok(_) => Ok(()),
+            Err(e) => Err(format!("Container '{}' failed to start", container_name))
+        }
     }
 
-    //was able to test by running docker run -t -d IMAGENAME and then running this function
     /// Stop a docker container
-    pub async fn stop_docker_container(&self, container_name: &str) {
-        self.docker_daemon
+    pub async fn stop_docker_container(&self, container_name: &str) -> Result<(), String> {
+        match self.docker_daemon
             .stop_container(container_name, None)
-            .await
-            .expect("container failed to stop");
+            .await {
+            Ok(_) => Ok(()),
+            Err(e) => Err(format!("Container '{}' failed to stop", container_name))
+        }
     }
 
     /// Reset a docker container
-    pub async fn reset_docker_container(docker: &Docker, container_name: &str) {
+    pub async fn reset_docker_container(&self, container_name: &str) -> Result<(), String> {
         let options = Some(RestartContainerOptions{
             t: 0,
         });
 
-        docker
+        match self.docker_daemon
             .restart_container(container_name, options)
-            .await
-            .expect("container failed to reset");
+            .await {
+            Ok(_) => Ok(()),
+            Err(e) => Err(format!("Container '{}' failed to restart", container_name))
+        }
     }
 }
 

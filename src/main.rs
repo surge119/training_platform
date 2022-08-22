@@ -38,7 +38,6 @@ struct Box {
     name: String,
 }
 
-
 //Start docker container
 async fn start_box(info: web::Json<Box>, data: Data<container::Containers>) -> impl Responder {
     let main_frame = data;
@@ -70,11 +69,10 @@ async fn stop_box(info: web::Json<Box>, data: Data<container::Containers>) -> im
     return web::Json(false);
 }
 
-
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    //Struct that is shared between all parts of the app, can share 
-    //Container info and docker controller easily
+    // Struct that is shared between all parts of the app, can share
+    // Container info and docker controller easily
     let data = Data::new(container::init_containers());
 
     println!("Starting server");
