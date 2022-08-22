@@ -26,11 +26,15 @@ python manage.py db upgrade
 
 #Start Rust Server (This is slow b/c i have to compile here rather than ARM)
 echo "Starting Rust Server\n"
-/opt/training_plat/target/debug/training_platform &
+cd /opt/training_plat
+whoami
+source "$HOME/.cargo/env"
+cargo run &
+cd -
 # Start CTFd
 echo "Starting CTFd"
 exec gunicorn 'CTFd:create_app()' \
-    --bind '0.0.0.0:8000' \
+    --bind '0.0.0.0:4000' \
     --workers $WORKERS \
     --worker-tmp-dir "$WORKER_TEMP_DIR" \
     --worker-class "$WORKER_CLASS" \

@@ -43,7 +43,7 @@ RUN adduser \
 RUN runuser -l  ctfd -c 'curl https://sh.rustup.rs -sSf | bash -s -- -y'
 
 RUN runuser -l ctfd -c 'cargo build --manifest-path /opt/training_plat/Cargo.toml'
-RUN chmod +x /opt/training_plat/target/debug/training_platform
+
 USER 1001
 EXPOSE 8000
 ENTRYPOINT ["/opt/CTFd/docker-entrypoint.sh"]
