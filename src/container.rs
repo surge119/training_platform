@@ -18,20 +18,36 @@ pub struct Containers {
     pub networks: HashMap<String, Network>,
 }
 
-/// Struct that represents a docker network - read in from json file
+/// Struct that represents a docker network - read in from docker-compose file
 #[derive(Deserialize, Debug, Clone, Serialize)]
 pub struct Network {
-    pub labs: HashMap<String, Machine>,
-    subnet: String,
+    version: String,
+    // Key is the name of the container, value is the info of the container
+    services: HashMap<String, Machine>,
+    networks: NetworkInfo,
 }
 
 /// Struct that represents a docker machine - used by Network
 #[derive(Deserialize, Debug, Clone, Serialize)]
 pub struct Machine {
-    container_name: String,
-    ip: String,
-    path: String,
+    //
+    build: HashMap<String, String>,
+    networks: HashMap<String, HashMap<String, String>>,
     description: String,
+}
+
+/// Struct describing the networking info of a docker-compose
+#[derive(Deserialize, Debug, Clone, Serialize)]
+pub struct NetworkInfo {
+    #[serde(flatten)]
+    network: HashMap<String, NetworkConfig>,
+}
+
+/// Struct for the configuration of the networking of a docker-compose
+#[derive(Deserialize, Debug, Clone, Serialize)]
+pub struct NetworkConfig {
+    driver: String,
+    ipam: HashMap<String, Vec<HashMap<String, String>>>,
 }
 
 /// Test network for now
@@ -39,7 +55,7 @@ pub fn init_containers() -> Containers {
     let docker_controller: DockerController = DockerController::new();
 
     let network: Network =
-        json_to_network("docker/pentesting/lin_net/linux_network.json").unwrap();
+        yaml_to_network("docker/web/docker-compose.yml.tp").unwrap();
 
     let mut networks: HashMap<String, Network> = HashMap::new();
     networks.insert("lin_net".to_owned(), network);
@@ -48,6 +64,17 @@ pub fn init_containers() -> Containers {
         docker_controller,
         networks,
     }
+}
+
+/// Load the yaml files to a struct
+fn yaml_to_network(file: &str) -> Result<Network, serde_yaml::Error> {
+    let mut file: File = File::open(&file).unwrap();
+    let mut data: String = String::new();
+
+    file.read_to_string(&mut data).unwrap();
+
+    let network: Network = serde_yaml::from_str(&data).unwrap();
+    return Ok(network);
 }
 
 /// Convert the json file provided into a Network struct

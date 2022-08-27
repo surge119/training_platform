@@ -42,14 +42,14 @@ struct Box {
 async fn start_box(info: web::Json<Box>, data: Data<container::Containers>) -> impl Responder {
     let main_frame = data;
     for network in main_frame.networks.clone() {
-        let result = network.1.labs.get(&info.name);
-        if result.is_some() {
-            // If this call fails,the thread will panic. Can't error check with ?
-            // operator b/c the function implements Future. Not a big deal for now,
-            // we can't add semaphores b/c of this
-            main_frame.docker_controller.start_docker_container(&info.name).await;
-            return web::Json(true);
-        }
+        // let result = network.1.labs.get(&info.name);
+        // if result.is_some() {
+        //     // If this call fails,the thread will panic. Can't error check with ?
+        //     // operator b/c the function implements Future. Not a big deal for now,
+        //     // we can't add semaphores b/c of this
+        //     main_frame.docker_controller.start_docker_container(&info.name).await;
+        //     return web::Json(true);
+        // }
     }
     return web::Json(false);
 }
@@ -57,14 +57,14 @@ async fn start_box(info: web::Json<Box>, data: Data<container::Containers>) -> i
 async fn stop_box(info: web::Json<Box>, data: Data<container::Containers>) -> impl Responder {
     let main_frame = data;
     for network in main_frame.networks.clone() {
-        let result = network.1.labs.get(&info.name);
-        if result.is_some() {
-            // If this call fails,the thread will panic. Can't error check with ?
-            // operator b/c the function implements Future. Not a big deal for now,
-            // we can't add semaphores b/c of this
-            main_frame.docker_controller.stop_docker_container(&info.name).await;
-            return web::Json(true);
-        }
+        // let result = network.1.labs.get(&info.name);
+        // if result.is_some() {
+        //     // If this call fails,the thread will panic. Can't error check with ?
+        //     // operator b/c the function implements Future. Not a big deal for now,
+        //     // we can't add semaphores b/c of this
+        //     main_frame.docker_controller.stop_docker_container(&info.name).await;
+        //     return web::Json(true);
+        // }
     }
     return web::Json(false);
 }
