@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+  autoflag:
+    build:
+      context: ./autoflag/src
+      dockerfile: Dockerfile
+    networks:
+      web_net:
+        ipv4_address: 10.10.9.2
+    description: "Autoflag"
+  umassdining:
+    build:
+      context: ./umassdining/src
+      dockerfile: Dockerfile
+    networks:
+      web_net:
+        ipv4_address: 10.10.9.3
+    description: "#1 Student Dining"
+  venting:
+    build:
+      context: ./venting/src
+      dockerfile: Dockerfile
+    networks:
+      web_net:
+        ipv4_address: 10.10.9.4
+    description: "sus"
+
+networks:
+  web_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.10.9.0/24
+          gateway: 10.10.9.1
