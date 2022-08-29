@@ -1,5 +1,5 @@
 import requests
-from flask import abort, request
+from flask import abort, request, render_template
 from CTFd.utils import config
 from CTFd.plugins import (
     bypass_csrf_protection)
@@ -9,8 +9,11 @@ from CTFd.utils.user import (
     get_current_user,
     is_admin,
 )
+
+
 #simple flask app at this point. Make sure no potentially sensitive info is leaked
 def load(app):
+    app
     print("Rust Plugin loaded")
     @app.route('/api/UMASS/get_boxes', methods=['GET'])
     def get_boxes():
@@ -22,9 +25,10 @@ def load(app):
         }
         for key,val in r1.json().items():
             labs = []
-            for lab in val['labs'].values():
+            for name,lab in val['services'].items():
+                print(lab)
                 labs.append({
-                    "container_name":lab["container_name"],
+                    "container_name":name,
                     "description":lab["description"]
                 })
             net_details = {
@@ -37,6 +41,8 @@ def load(app):
     @app.route("/api/UMASS/start_box",methods=['POST'])
     @bypass_csrf_protection
     def start_box():
+        if is_admin() is not True:
+            return {"Data":"Invalid Perms"},403
         if authed():
             user = get_current_user()
             team = get_current_team()
@@ -57,6 +63,8 @@ def load(app):
     @app.route("/api/UMASS/stop_box",methods=['POST'])
     @bypass_csrf_protection
     def stop_box():
+        if is_admin() is not True:
+            return {"Data":"Invalid Perms"},403
         if authed():
             user = get_current_user()
             team = get_current_team()
