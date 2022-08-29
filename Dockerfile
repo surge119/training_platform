@@ -1,5 +1,6 @@
 FROM python:3.9-slim-buster
 WORKDIR /opt/CTFd
+
 RUN mkdir -p /opt/CTFd /var/log/CTFd /var/uploads /opt/training_plat
 
 # hadolint ignore=DL3008
@@ -39,11 +40,16 @@ RUN adduser \
     ctfd \
     && chmod +x /opt/CTFd/docker-entrypoint.sh \
     && chown -R 1001:1001 /opt/CTFd /var/log/CTFd /var/uploads /opt/training_plat
+#Need to install docker
+
+#Setup Docker Network
+
+RUN runuser -l ctfd -c 'python3 -m pip install pyyaml'
+RUN runuser -l ctfd -c 'python3 /opt/training_plat/platform_setup.py'
 # Get Rust
 RUN runuser -l  ctfd -c 'curl https://sh.rustup.rs -sSf | bash -s -- -y'
 
 RUN runuser -l ctfd -c 'cargo build --manifest-path /opt/training_plat/Cargo.toml'
-
 USER 1001
 EXPOSE 8000
 ENTRYPOINT ["/opt/CTFd/docker-entrypoint.sh"]

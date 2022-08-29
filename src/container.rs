@@ -23,7 +23,7 @@ pub struct Containers {
 pub struct Network {
     version: String,
     // Key is the name of the container, value is the info of the container
-    services: HashMap<String, Machine>,
+    pub services: HashMap<String, Machine>,
     networks: NetworkInfo,
 }
 

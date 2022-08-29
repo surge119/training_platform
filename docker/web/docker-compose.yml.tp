@@ -1,23 +1,31 @@
-version: '3'
-
+networks:
+  web_net:
+    driver: bridge
+    ipam:
+      config:
+      - gateway: 10.10.9.1
+        subnet: 10.10.9.0/24
 services:
   autoflag:
+    container_name: autoflag
     build:
       context: ./autoflag/src
       dockerfile: Dockerfile
     networks:
       web_net:
         ipv4_address: 10.10.9.2
-    description: "Autoflag"
+    description: "Akamai Challenge!!!!!"
   umassdining:
+    container_name: umassdining
     build:
       context: ./umassdining/src
       dockerfile: Dockerfile
     networks:
       web_net:
         ipv4_address: 10.10.9.3
-    description: "#1 Student Dining"
+    description: "#1 IN STUDENT DINING"
   venting:
+    container_name: venting
     build:
       context: ./venting/src
       dockerfile: Dockerfile
@@ -25,11 +33,5 @@ services:
       web_net:
         ipv4_address: 10.10.9.4
     description: "sus"
+version: '3'
 
-networks:
-  web_net:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 10.10.9.0/24
-          gateway: 10.10.9.1
