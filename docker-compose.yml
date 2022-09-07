@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  training_platform:
+    build:
+      context: .
+    networks:
+      training_platform:
+       ipv4_address: 10.10.10.2
+
+networks:
+  training_platform:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.10.10.0/24
+
