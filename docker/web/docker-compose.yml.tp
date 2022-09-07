@@ -1,11 +1,14 @@
-networks:
-  web_net:
-    driver: bridge
-    ipam:
-      config:
-      - gateway: 10.10.9.1
-        subnet: 10.10.9.0/24
+version: '3'
+
 services:
+  club_demo:
+    container_name: club_demo
+    build: ./demo_club
+    networks:
+      web_net:
+        ipv4_address: 10.10.9.10
+    description: "UMass DEMO"
+
   autoflag:
     container_name: autoflag
     build:
@@ -15,6 +18,7 @@ services:
       web_net:
         ipv4_address: 10.10.9.2
     description: "Akamai Challenge!!!!!"
+
   umassdining:
     container_name: umassdining
     build:
@@ -24,6 +28,7 @@ services:
       web_net:
         ipv4_address: 10.10.9.3
     description: "#1 IN STUDENT DINING"
+
   venting:
     container_name: venting
     build:
@@ -33,5 +38,12 @@ services:
       web_net:
         ipv4_address: 10.10.9.4
     description: "sus"
-version: '3'
+
+networks:
+  web_net:
+    driver: bridge
+    ipam:
+      config:
+      - gateway: 10.10.9.1
+        subnet: 10.10.9.0/24
 
