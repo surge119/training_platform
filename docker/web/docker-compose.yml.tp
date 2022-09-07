@@ -3,7 +3,8 @@ version: '3'
 services:
   club_demo:
     container_name: club_demo
-    build: ./demo_club
+    build:
+      context: ./demo_club
     networks:
       web_net:
         ipv4_address: 10.10.9.10
