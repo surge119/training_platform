@@ -7,14 +7,21 @@ services:
     depends_on:
       - rust-server
     networks:
-      - training_platform
+      training_platform:
+        ipv4_address: 10.10.10.5
+    ports:
+      - "4000:4000"
 
   rust-server:
     build:
       context: ./rust-server/
     networks:
-      - training_platform
+      training_platform:
+        ipv4_address: 10.10.10.2
 
 networks:
   training_platform:
     driver: bridge
+    ipam:
+      config:
+        - subnet: 10.10.10.0/24
