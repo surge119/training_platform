@@ -83,4 +83,25 @@ def load(app):
             "name":request.json['container_name']
         })
         return {"success": r1.json() is True, "Data": r1.text}, 200
+    @app.route("/api/UMASS/reset_box",methods=['POST'])
+    @bypass_csrf_protection
+    def reset_box():
+        if is_admin() is not True:
+            return {"Data":"Invalid Perms"},403
+        if authed():
+            user = get_current_user()
+            team = get_current_team()
+            if is_admin():
+                pass
+            else:
+                if config.is_teams_mode() and team is None:
+                    abort(403)
+        else:
+            return {"Error":"You must be logged in to start a box"},403
+        r1 = requests.post('http://127.0.0.1:8000/api/reset_box',headers={
+            "content-type":"application/json"
+        },json={
+            "name":request.json['container_name']
+        })
+        return {"success": r1.json() is True, "Data": r1.text}, 200
 

@@ -1,4 +1,3 @@
-
 {% extends "admin/base.html" %}
 
 {% block content %}
@@ -22,7 +21,7 @@
             let table = document.createElement('table');
             let tr = document.createElement('tr');
             //Table titles
-            ["Container Name","Description","Start","Stop"].forEach(name=>{
+            ["Container Name","Description","Start","Stop","Reset"].forEach(name=>{
                 let th = document.createElement('th');
                 th.textContent = name;
                 tr.appendChild(th);
@@ -33,9 +32,9 @@
             //Create a row for each lab and populate columns
             for(const lab of network.labs){
                 tr = document.createElement('tr');
-                [lab.container_name,lab.description,"start","stop"].forEach((text)=>{
+                [lab.container_name,lab.description,"start","stop","reset"].forEach((text)=>{
                     let td = document.createElement('td');
-                    if(text=="start" || text=="stop"){
+                    if(text=="start" || text=="stop" || text=="reset"){
                         let button = document.createElement('button');
                         button.onclick = async ()=>{
                             await fetch(`/api/UMASS/${text}_box`,{
