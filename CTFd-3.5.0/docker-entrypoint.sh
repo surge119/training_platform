@@ -26,11 +26,7 @@ python manage.py db upgrade
 
 #Start Rust Server (This is slow b/c i have to compile here rather than ARM)
 echo "Starting Rust Server\n"
-cd /opt/training_plat
 whoami
-source "$HOME/.cargo/env"
-cargo run &
-cd -
 # Start CTFd
 echo "Starting CTFd"
 exec gunicorn 'CTFd:create_app()' \

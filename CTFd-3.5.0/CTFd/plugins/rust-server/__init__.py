@@ -10,6 +10,8 @@ from CTFd.utils.user import (
     is_admin,
 )
 
+# Define IP address and port here
+ADDR = "10.10.10.2:8000"
 
 #simple flask app at this point. Make sure no potentially sensitive info is leaked
 def load(app):
@@ -19,7 +21,7 @@ def load(app):
     def get_boxes():
         if authed() is False:
             return {"Error":"You must be logged in to view this stuff :)"},403
-        r1 = requests.get('http://127.0.0.1:8000/api/boxes')
+        r1 = requests.get('http://' + ADDR + '/api/boxes')
         data = {
             "networks":[]
         }
@@ -53,7 +55,7 @@ def load(app):
                     abort(403)
         else:
             return {"Error":"You must be logged in to start a box"},403
-        r1 = requests.post('http://127.0.0.1:8000/api/start_box',headers={
+        r1 = requests.post('http://' + ADDR + '/api/start_box',headers={
             "content-type":"application/json"
         },json={
             "name":request.json['container_name']
@@ -75,7 +77,7 @@ def load(app):
                     abort(403)
         else:
             return {"Error":"You must be logged in to start a box"},403
-        r1 = requests.post('http://127.0.0.1:8000/api/stop_box',headers={
+        r1 = requests.post('http://' + ADDR + '/api/stop_box',headers={
             "content-type":"application/json"
         },json={
             "name":request.json['container_name']

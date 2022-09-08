@@ -1,12 +1,18 @@
 version: '3'
 
 services:
-  training_platform:
+  ctfd:
     build:
-      context: .
+      context: ./CTFd-3.5.0/
     networks:
       training_platform:
-       ipv4_address: 10.10.10.2
+        ipv4_address: 10.10.10.5
+  rust-server:
+    build:
+      context: ./rust-server/
+    networks:
+      training_platform:
+        ipv4_address: 10.10.10.2
 
 networks:
   training_platform:
@@ -14,4 +20,4 @@ networks:
     ipam:
       config:
         - subnet: 10.10.10.0/24
-
+          gateway: 10.10.10.1

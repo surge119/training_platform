@@ -78,7 +78,7 @@ async fn main() -> std::io::Result<()> {
                     .route("/stop_box", web::post().to(stop_box))
             )
     })
-        .bind(("127.0.0.1", 8000))?
+        .bind(("0.0.0.0", 8000))?
         .run()
         .await
 }
