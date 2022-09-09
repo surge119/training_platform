@@ -5,6 +5,7 @@ use std::path;
 
 use actix_web::dev::ResourcePath;
 use actix_web::web::Path;
+use bollard::ClientVersion;
 use bollard::container::{Config, CreateContainerOptions, RestartContainerOptions};
 use bollard::container::RemoveContainerOptions;
 use bollard::container::StartContainerOptions;
@@ -23,9 +24,18 @@ pub struct DockerController {
 
 impl DockerController {
     pub fn new() -> DockerController {
-        DockerController {
-            docker_daemon: Docker::connect_with_socket_defaults().expect("Docker daemon failed to connect. Check if Docker is running")
-        }
+        //DockerController {
+        //    docker_daemon: Docker::connect_with_socket_defaults().expect("Docker daemon failed to connect. Check if Docker is running")
+        //}
+
+		let version = ClientVersion {
+			major_version: 1,
+			minor_version: 41,
+		};
+
+		DockerController {
+			docker_daemon: Docker::connect_with_http("http://10.10.10.1:2375", 4, &version).expect("Failed to connect to remote Docker daemon")
+		}		
     }
 
     /// Start a docker container

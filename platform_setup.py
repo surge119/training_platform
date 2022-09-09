@@ -95,22 +95,45 @@ def delete_compose_file(path: str) -> None:
 
 
 def build_containers(path: str) -> None:
-    """Build all docker containers under docker/
+    """Build all docker containers that are ctf challenges
+
+	Args:
+		path: The path to the docker compose file
 
     Returns: None
 
     """
-    # Copy challenges compose file to rust-server directorr
-    tmp_compose = "./rust-server/docker-compose.yml.tp"
-    shutil.copyfile(path, tmp_compose)
-
     compose_path = generate_docker_compose(path)
     docker_compose_create(compose_path)
     delete_compose_file(compose_path)
+
+
+def build_training_platform(path: str, chall_path: str) -> None:
+    """Build the training platform
+	
+	Args:
+		path: The path to the training platform docker compose file
+		chall_path: The path to the challenges docker compose file
+
+	Returns: None
+
+    """
+	# Copy challenges compose file to rust-server directory
+    tmp_compose = "./rust-server/docker-compose.yml.tp"
+    shutil.copyfile(chall_path, tmp_compose)
+    docker_compose_up(path)
     delete_compose_file(tmp_compose)
 
 
+def exec_docker() -> None:
+	"""
+	"""
+	subprocess.run(["sudo". "systemctl", "stop", "docker"])
+    subprocess.run(["sudo", "dockerd", "-H", "unix:///var/run/docker.sock", "-H", "tcp://`10.10.10.1"])
+
+
 if __name__ == "__main__":
-    build_containers("./docker/docker-compose.yml.tp")
-    docker_compose_up("./docker-compose.yml")
+	chall_path = "./docker/docker-compose.yml.tp"
+	build_containers(chall_path)
+	build_training_platform("./docker-compose.yml", chall_path)
 

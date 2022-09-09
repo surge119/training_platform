@@ -1,6 +1,16 @@
 version: '3'
 
 services:
+  autoflag:
+    container_name: autoflag
+    build:
+      context: ./web/autoflag/src
+      dockerfile: Dockerfile
+    networks:
+      web_net:
+        ipv4_address: 10.10.9.2
+    description: "Akamai Challenge!!!!!"
+
   club_demo:
     container_name: club_demo
     build:
@@ -10,15 +20,6 @@ services:
         ipv4_address: 10.10.9.10
     description: "UMass DEMO"
 
-#  autoflag:
-#    container_name: autoflag
-#    build:
-#      context: ./web/autoflag/src
-#      dockerfile: Dockerfile
-#    networks:
-#      web_net:
-#        ipv4_address: 10.10.9.2
-#    description: "Akamai Challenge!!!!!"
 #
 #  umassdining:
 #    container_name: umassdining
