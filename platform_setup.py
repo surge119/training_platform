@@ -1,6 +1,7 @@
 import os
 import shutil
 import subprocess
+import time
 import yaml
 
 
@@ -128,11 +129,13 @@ def build_training_platform(path: str, chall_path: str) -> None:
 def exec_docker() -> None:
 	"""
 	"""
-	subprocess.run(["sudo". "systemctl", "stop", "docker"])
-    subprocess.run(["sudo", "dockerd", "-H", "unix:///var/run/docker.sock", "-H", "tcp://`10.10.10.1"])
+	subprocess.run(["sudo", "systemctl", "stop", "docker"])
+	os.popen("sudo dockerd -H unix:///var/run/docker.sock -H tcp://10.10.10.1 > dockerd-logs &")
+	time.sleep(15)
 
 
 if __name__ == "__main__":
+	exec_docker()
 	chall_path = "./docker/docker-compose.yml.tp"
 	build_containers(chall_path)
 	build_training_platform("./docker-compose.yml", chall_path)
