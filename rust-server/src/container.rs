@@ -30,7 +30,6 @@ pub struct Network {
 /// Struct that represents a docker machine - used by Network
 #[derive(Deserialize, Debug, Clone, Serialize)]
 pub struct Machine {
-    //
     build: HashMap<String, String>,
     networks: HashMap<String, HashMap<String, String>>,
     description: String,
@@ -55,10 +54,10 @@ pub fn init_containers() -> Containers {
     let docker_controller: DockerController = DockerController::new();
 
     let network: Network =
-        yaml_to_network("docker/web/docker-compose.yml.tp").unwrap();
+        yaml_to_network("docker-compose.yml.tp").unwrap();
 
     let mut networks: HashMap<String, Network> = HashMap::new();
-    networks.insert("lin_net".to_owned(), network);
+    networks.insert("Challenges".to_owned(), network);
 
     Containers {
         docker_controller,
@@ -77,13 +76,3 @@ fn yaml_to_network(file: &str) -> Result<Network, serde_yaml::Error> {
     return Ok(network);
 }
 
-/// Convert the json file provided into a Network struct
-fn json_to_network(file: &str) -> Result<Network, serde_json::Error> {
-    let mut file: File = File::open(&file).unwrap();
-    let mut data: String = String::new();
-
-    file.read_to_string(&mut data).unwrap();
-
-    let network: Network = serde_json::from_str(&data)?;
-    return Ok(network);
-}

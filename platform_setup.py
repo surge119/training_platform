@@ -1,25 +1,7 @@
 import os
-from pathlib import Path
+import shutil
 import subprocess
 import yaml
-
-
-def collect_docker_compose(path: str) -> list:
-    """Get all the docker compose files
-
-    Args:
-        path: The path to the docker source directory
-
-    Returns: A list of the paths to the docker compose files
-
-    """
-    path_list = list()
-
-    # Read in docker compose files with extra fields (*.yml.tp)
-    for path in Path(path).rglob("*.yml.tp"):
-        path_list.append(path)
-
-    return path_list
 
 
 def remove_custom_properties(yaml_dict: dict) -> dict:
@@ -63,8 +45,8 @@ def generate_docker_compose(path: str) -> str:
         return compose_path
 
 
-def create_containers(path: str) -> None:
-    """Run `docker compose create` on all docker compose files
+def docker_compose_create(path: str) -> None:
+    """Run `docker compose create`
 
     Args:
         path: The path to the docker compose file
@@ -72,7 +54,32 @@ def create_containers(path: str) -> None:
     Returns: None
 
     """
-    subprocess.run(["docker", "compose", "-f", path, "create"])
+    exec_docker_compose(path, "create")
+
+
+def docker_compose_up(path: str) -> None:
+    """Run `docker compose up`
+
+    Args:
+        path: The path to the docker compose file
+
+    Returns: None
+
+    """
+    exec_docker_compose(path, "up")
+
+
+def exec_docker_compose(path: str, cmd: str) -> None:
+    """Run `docker compose -f {path} {cmd}`
+
+    Args:
+        path: The path to the docker compose file
+        cmd: The command to run
+
+    Returns: None
+
+    """
+    subprocess.run(["docker", "compose", "-f", path, cmd])
 
 
 def delete_compose_file(path: str) -> None:
@@ -87,21 +94,23 @@ def delete_compose_file(path: str) -> None:
     os.remove(path)
 
 
-def build_containers() -> None:
+def build_containers(path: str) -> None:
     """Build all docker containers under docker/
 
     Returns: None
 
     """
-    # Get current containers
-    docker_path = "docker/"
-    path_list = collect_docker_compose(docker_path)
+    # Copy challenges compose file to rust-server directorr
+    tmp_compose = "./rust-server/docker-compose.yml.tp"
+    shutil.copyfile(path, tmp_compose)
 
-    for path in path_list:
-        compose_path = generate_docker_compose(path)
-        create_containers(compose_path)
-        delete_compose_file(compose_path)
+    compose_path = generate_docker_compose(path)
+    docker_compose_create(compose_path)
+    delete_compose_file(compose_path)
+    delete_compose_file(tmp_compose)
 
 
 if __name__ == "__main__":
-    build_containers()
+    build_containers("./docker/docker-compose.yml.tp")
+    docker_compose_up("./docker-compose.yml")
+
