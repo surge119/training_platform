@@ -1,12 +1,23 @@
 version: '3'
 
 services:
-  training_platform:
+  ctfd:
     build:
-      context: .
+      context: ./CTFd-3.5.0/
+    depends_on:
+      - rust-server
     networks:
       training_platform:
-       ipv4_address: 10.10.10.2
+        ipv4_address: 10.10.10.5
+    ports:
+      - "4000:4000"
+
+  rust-server:
+    build:
+      context: ./rust-server/
+    networks:
+      training_platform:
+        ipv4_address: 10.10.10.2
 
 networks:
   training_platform:

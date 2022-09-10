@@ -14,15 +14,11 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-COPY ./CTFd-3.5.0/requirements.txt /opt/CTFd/
+COPY ./requirements.txt /opt/CTFd/
 
 RUN pip install -r requirements.txt --no-cache-dir
 
-COPY /CTFd-3.5.0 /opt/CTFd
-COPY . /opt/training_plat
-RUN rm -r /opt/training_plat/CTFd-3.5.0
-
-
+COPY . /opt/CTFd
 
 # hadolint ignore=SC2086
 RUN for d in CTFd/plugins/*; do \
@@ -40,16 +36,9 @@ RUN adduser \
     ctfd \
     && chmod +x /opt/CTFd/docker-entrypoint.sh \
     && chown -R 1001:1001 /opt/CTFd /var/log/CTFd /var/uploads /opt/training_plat
-#Need to install docker
 
 #Setup Docker Network
 
-RUN runuser -l ctfd -c 'python3 -m pip install pyyaml'
-RUN runuser -l ctfd -c 'python3 /opt/training_plat/platform_setup.py'
-# Get Rust
-RUN runuser -l  ctfd -c 'curl https://sh.rustup.rs -sSf | bash -s -- -y'
-
-RUN runuser -l ctfd -c 'cargo build --manifest-path /opt/training_plat/Cargo.toml'
 USER 1001
 EXPOSE 4000
 ENTRYPOINT ["/opt/CTFd/docker-entrypoint.sh"]
