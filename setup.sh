@@ -15,6 +15,6 @@ sudo systemctl stop docker.socket
 # For Azure
 sudo usermod -aG docker azureuser
 
-# Start docker daemon and listen on 10.10.10.1
-sudo dockerd -H unix:///var/run/docker.sock -H tcp://127.0.0.1 > dockerd-logs &
+# Start docker daemon and listen on 172.17.0.1 (docker ip)
+sudo dockerd -H unix:///var/run/docker.sock -H tcp://172.17.0.1 > dockerd-logs &
 
