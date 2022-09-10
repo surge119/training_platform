@@ -1,18 +1,10 @@
 extern crate core;
 
-
-use std::sync::Mutex;
-
-use actix_web::{App, HttpServer, Responder, ResponseError, web, web::Data};
+use actix_web::{web, web::Data, App, HttpServer, Responder};
 use serde::{Deserialize, Serialize};
-
-use container::Machine;
-use docker::DockerController;
 
 mod container;
 mod docker;
-mod logger;
-
 
 #[derive(Serialize)]
 struct Status {
@@ -41,7 +33,10 @@ struct Box {
 //Start docker container
 async fn start_box(info: web::Json<Box>, data: Data<container::Containers>) -> impl Responder {
     let main_frame = data;
-    let result = main_frame.docker_controller.start_docker_container(&info.name).await;
+    let result = main_frame
+        .docker_controller
+        .start_docker_container(&info.name)
+        .await;
     println!("{:?}", result);
     if result.is_err() {
         return web::Json(false);
@@ -51,7 +46,10 @@ async fn start_box(info: web::Json<Box>, data: Data<container::Containers>) -> i
 
 async fn stop_box(info: web::Json<Box>, data: Data<container::Containers>) -> impl Responder {
     let main_frame = data;
-    let result = main_frame.docker_controller.stop_docker_container(&info.name).await;
+    let result = main_frame
+        .docker_controller
+        .stop_docker_container(&info.name)
+        .await;
     println!("{:?}", result);
     if result.is_err() {
         return web::Json(false);
@@ -61,7 +59,10 @@ async fn stop_box(info: web::Json<Box>, data: Data<container::Containers>) -> im
 
 async fn reset_box(info: web::Json<Box>, data: Data<container::Containers>) -> impl Responder {
     let main_frame = data;
-    let result = main_frame.docker_controller.reset_docker_container(&info.name).await;
+    let result = main_frame
+        .docker_controller
+        .reset_docker_container(&info.name)
+        .await;
     println!("{:?}", result);
     if result.is_err() {
         return web::Json(false);
@@ -78,18 +79,16 @@ async fn main() -> std::io::Result<()> {
     println!("{:?}", data);
 
     HttpServer::new(move || {
-        App::new()
-            .app_data(Data::clone(&data))
-            .service(
-                web::scope("/api")
-                    .route("/boxes", web::get().to(get_boxes))
-                    .route("/status", web::get().to(check_server_health))
-                    .route("/start_box", web::post().to(start_box))
-                    .route("/stop_box", web::post().to(stop_box))
-                    .route("/reset_box", web::post().to(reset_box))
-            )
+        App::new().app_data(Data::clone(&data)).service(
+            web::scope("/api")
+                .route("/boxes", web::get().to(get_boxes))
+                .route("/status", web::get().to(check_server_health))
+                .route("/start_box", web::post().to(start_box))
+                .route("/stop_box", web::post().to(stop_box))
+                .route("/reset_box", web::post().to(reset_box)),
+        )
     })
-        .bind(("0.0.0.0", 8000))?
-        .run()
-        .await
+    .bind(("0.0.0.0", 8000))?
+    .run()
+    .await
 }

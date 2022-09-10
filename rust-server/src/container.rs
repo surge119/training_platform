@@ -1,14 +1,9 @@
 use std::collections::HashMap;
-use std::ffi::OsStr;
-use std::fs;
-use std::fs::{DirEntry, File, ReadDir};
+use std::fs::File;
 use std::io::Read;
-use std::path::{Path, PathBuf};
 
 use serde::{Deserialize, Serialize};
-use serde_json;
 
-use crate::docker;
 use crate::docker::DockerController;
 
 /// Struct for all of the containers and the docker daemon
@@ -53,8 +48,7 @@ pub struct NetworkConfig {
 pub fn init_containers() -> Containers {
     let docker_controller: DockerController = DockerController::new();
 
-    let network: Network =
-        yaml_to_network("docker-compose.yml.tp").unwrap();
+    let network: Network = yaml_to_network("docker-compose.yml.tp").unwrap();
 
     let mut networks: HashMap<String, Network> = HashMap::new();
     networks.insert("Challenges".to_owned(), network);
@@ -75,4 +69,3 @@ fn yaml_to_network(file: &str) -> Result<Network, serde_yaml::Error> {
     let network: Network = serde_yaml::from_str(&data).unwrap();
     return Ok(network);
 }
-

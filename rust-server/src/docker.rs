@@ -1,11 +1,7 @@
 use std::borrow::Cow;
-use std::cmp::min;
-use std::default::Default;
 use std::process::Command;
 
 use bollard::container::{RestartContainerOptions, StartContainerOptions};
-use bollard::models::{EndpointIpamConfig, EndpointSettings};
-use bollard::network::{ConnectNetworkOptions, DisconnectNetworkOptions};
 use bollard::ClientVersion;
 use bollard::Docker;
 
@@ -24,10 +20,14 @@ pub fn get_docker_api_version() -> ClientVersion {
         .stdout;
 
     // Find the index of where the Docker Engine API version is listed
-    let api_index: usize = String::from_utf8(output.clone()).expect("Invalid UTF8").find("API version").unwrap();
+    let api_index: usize = String::from_utf8(output.clone())
+        .expect("Invalid UTF8")
+        .find("API version")
+        .unwrap();
 
     // Get minor version first, since major requires move of `output`
-    let minor_version_str: Cow<str> = String::from_utf8_lossy(&output[api_index + 21..api_index + 21 + 2]);
+    let minor_version_str: Cow<str> =
+        String::from_utf8_lossy(&output[api_index + 21..api_index + 21 + 2]);
     let minor_version: usize = String::from(minor_version_str).parse::<usize>().unwrap();
 
     // Get major version
@@ -41,10 +41,14 @@ pub fn get_docker_api_version() -> ClientVersion {
 }
 
 impl DockerController {
-    pub fn new() -> DockerController
+    pub fn new() -> DockerController {
         DockerController {
-            docker_daemon: Docker::connect_with_http("http://172.17.0.1:2375", 4, &get_docker_api_version())
-                .expect("Failed to connect to remote Docker daemon"),
+            docker_daemon: Docker::connect_with_http(
+                "http://172.17.0.1:2375",
+                4,
+                &get_docker_api_version(),
+            )
+            .expect("Failed to connect to remote Docker daemon"),
         }
     }
 
@@ -56,7 +60,7 @@ impl DockerController {
             .await
         {
             Ok(_) => Ok(()),
-            Err(e) => Err(format!("Container '{}' failed to start", container_name)),
+            Err(_e) => Err(format!("Container '{}' failed to start", container_name)),
         }
     }
 
@@ -68,7 +72,7 @@ impl DockerController {
             .await
         {
             Ok(_) => Ok(()),
-            Err(e) => Err(format!("Container '{}' failed to stop", container_name)),
+            Err(_e) => Err(format!("Container '{}' failed to stop", container_name)),
         }
     }
 
@@ -82,43 +86,7 @@ impl DockerController {
             .await
         {
             Ok(_) => Ok(()),
-            Err(e) => Err(format!("Container '{}' failed to restart", container_name)),
+            Err(_e) => Err(format!("Container '{}' failed to restart", container_name)),
         }
     }
-}
-
-//docker container must be running for this to work
-pub async fn connect_docker_network(
-    docker: &Docker,
-    network_name: &str,
-    container_name: &str,
-    ip_address: &str,
-) {
-    let config = ConnectNetworkOptions {
-        container: container_name,
-        endpoint_config: EndpointSettings {
-            ipam_config: Some(EndpointIpamConfig {
-                ipv4_address: Some(String::from(ip_address)),
-                ..Default::default()
-            }),
-            ..Default::default()
-        },
-    };
-
-    docker
-        .connect_network(network_name, config)
-        .await
-        .expect("failed to connect to network");
-}
-
-pub async fn disconnect_docker_network(docker: &Docker, network_name: &str, container_name: &str) {
-    let config = DisconnectNetworkOptions {
-        container: container_name,
-        force: true,
-    };
-
-    docker
-        .disconnect_network(network_name, config)
-        .await
-        .expect("failed to disconnect from network");
 }
