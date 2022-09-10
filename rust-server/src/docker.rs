@@ -34,7 +34,7 @@ impl DockerController {
 		};
 
 		DockerController {
-			docker_daemon: Docker::connect_with_http("http://10.10.10.1:2375", 4, &version).expect("Failed to connect to remote Docker daemon")
+			docker_daemon: Docker::connect_with_http("http://172.17.0.1:2375", 4, &version).expect("Failed to connect to remote Docker daemon")
 		}		
     }
 
