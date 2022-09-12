@@ -150,11 +150,13 @@ def setup_args() -> argparse.Namespace:
 
 
 if __name__ == "__main__":
-    # challenges_path = "./docker/docker-compose.yml.tp"
-    # build_containers(challenges_path)
-    platform_path = "/docker-compose.yml"
+    challenges_path = "./docker/docker-compose.yml.tp"
+    platform_path = "./docker-compose.yml"
     args = setup_args()
     if args.target == "all":
+        build_containers(challenges_path)
         build_training_platform(platform_path, args.challenge_file)
-    if args.target == "rust-server":
+    elif args.target == "rust-server":
         rust_server.setup_rust_server(args.challenge_file)
+    elif args.target == "challenges":
+        build_containers(challenges_path)

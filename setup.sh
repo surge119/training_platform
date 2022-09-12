@@ -1,7 +1,9 @@
 #!/bin/bash
 
 # Install python
-sudo apt install -y python3
+sudo apt install -y python3 pip
+
+pip install -r requirements.txt
 
 # Install docker
 curl -fsSL https://get.docker.com -o get-docker.sh && sudo sh get-docker.sh
