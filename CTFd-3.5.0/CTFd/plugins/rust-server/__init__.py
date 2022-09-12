@@ -108,3 +108,14 @@ def load(app):
             "name": request.json['container_name']
         })
         return {"success": r1.json() is True, "Data": r1.text}, 200
+
+    @app.route("/api/UMASS/create_challenges", method=['POST'])
+    @bypass_csrf_protection
+    def create_challenges():
+        if not is_admin():
+            return {"Data": "Invalid Perms"}, 403
+
+        # API request to get boxes
+        r1 = requests.get('http://127.0.0.1:4000/api/UMASS/get_boxes')
+
+        data = r1.json
