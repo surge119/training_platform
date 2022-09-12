@@ -1,133 +1,160 @@
+import argparse
 import os
 import shutil
 import subprocess
-import time
 import yaml
+
+from setup import rust_server
 
 
 def remove_custom_properties(yaml_dict: dict) -> dict:
-	"""Remove the custom properties that were added to the docker-compose.yml file
+    """Remove the custom properties that were added to the docker-compose.yml file
 
-	Args:
-		yaml_dict: A dict of the docker-compose.yml file
+    Args:
+            yaml_dict: A dict of the docker-compose.yml file
 
-	Returns: An updated dict without the custom properties
+    Returns: An updated dict without the custom properties
 
-	"""
-	# Loop to find 'services
-	for key in yaml_dict:
-		if key == "services":
-			# Loop to find each service
-			for service_key in yaml_dict[key]:
-				# Remove properties from service
-				yaml_dict[key][service_key].pop("description", None)
+    """
+    # Loop to find 'services
+    for key in yaml_dict:
+        if key == "services":
+            # Loop to find each service
+            for service_key in yaml_dict[key]:
+                # Remove properties from service
+                yaml_dict[key][service_key].pop("description", None)
 
-	return yaml_dict
+    return yaml_dict
 
 
 def generate_docker_compose(path: str) -> str:
-	"""Take docker-compose.yml.tp and create propper docker compose file without extra fields
+    """Take docker-compose.yml.tp and create proper docker compose file without extra fields
 
-	Args:
-		path: The path to the docker compose file
+    Args:
+            path: The path to the docker compose file
 
-	Returns: The path of the new file created
+    Returns: The path of the new file created
 
-	"""
-	with open(path, "r") as tp_file:
-		yaml_dict = yaml.safe_load(tp_file)
-		yaml_dict = remove_custom_properties(yaml_dict)
+    """
+    with open(path, "r") as tp_file:
+        yaml_dict = yaml.safe_load(tp_file)
+        yaml_dict = remove_custom_properties(yaml_dict)
 
-		compose_path = str(path)[:-3]
+        compose_path = str(path)[:-3]
 
-		with open(compose_path, "w") as compose_file:
-			yaml.safe_dump(yaml_dict, compose_file)
+        with open(compose_path, "w") as compose_file:
+            yaml.safe_dump(yaml_dict, compose_file)
 
-		return compose_path
+        return compose_path
 
 
 def docker_compose_create(path: str) -> None:
-	"""Run `docker compose create`
+    """Run `docker compose create`
 
-	Args:
-		path: The path to the docker compose file
-	
-	Returns: None
+    Args:
+            path: The path to the docker compose file
 
-	"""
-	exec_docker_compose(path, "create")
+    Returns: None
+
+    """
+    exec_docker_compose(path, "create")
 
 
 def docker_compose_up(path: str) -> None:
-	"""Run `docker compose up`
+    """Run `docker compose up`
 
-	Args:
-		path: The path to the docker compose file
+    Args:
+            path: The path to the docker compose file
 
-	Returns: None
+    Returns: None
 
-	"""
-	exec_docker_compose(path, "up")
+    """
+    exec_docker_compose(path, "up")
 
 
 def exec_docker_compose(path: str, cmd: str) -> None:
-	"""Run `docker compose -f {path} {cmd}`
+    """Run `docker compose -f {path} {cmd}`
 
-	Args:
-		path: The path to the docker compose file
-		cmd: The command to run
+    Args:
+            path: The path to the docker compose file
+            cmd: The command to run
 
-	Returns: None
+    Returns: None
 
-	"""
-	subprocess.run(["docker", "compose", "-f", path, cmd])
+    """
+    subprocess.run(["docker", "compose", "-f", path, cmd])
 
 
 def delete_compose_file(path: str) -> None:
-	"""Delete the generated docker-compose.yml file
+    """Delete the generated docker-compose.yml file
 
-	Args:
-		path: The path to the docker compose file
+    Args:
+            path: The path to the docker compose file
 
-	Returns: None
+    Returns: None
 
-	"""
-	os.remove(path)
+    """
+    os.remove(path)
 
 
 def build_containers(path: str) -> None:
-	"""Build all docker containers that are ctf challenges
+    """Build all docker containers that are ctf challenges
 
-	Args:
-		path: The path to the docker compose file
+    Args:
+            path: The path to the docker compose file
 
-	Returns: None
+    Returns: None
 
-	"""
-	compose_path = generate_docker_compose(path)
-	docker_compose_create(compose_path)
-	delete_compose_file(compose_path)
+    """
+    compose_path = generate_docker_compose(path)
+    docker_compose_create(compose_path)
+    delete_compose_file(compose_path)
 
 
-def build_training_platform(path: str, chall_path: str) -> None:
-	"""Build the training platform
-	
-	Args:
-		path: The path to the training platform docker compose file
-		chall_path: The path to the challenges docker compose file
+def build_training_platform(path: str, challenges_path: str) -> None:
+    """Build the training platform
 
-	Returns: None
+    Args:
+            path: The path to the training platform docker compose file
+            challenges_path: The path to the challenges' docker compose file
 
-	"""
-	# Copy challenges compose file to rust-server directory
-	tmp_compose = "./rust-server/docker-compose.yml.tp"
-	shutil.copyfile(chall_path, tmp_compose)
-	docker_compose_up(path)
-	delete_compose_file(tmp_compose)
+    Returns: None
+
+    """
+    rust_server.setup_rust_server(challenges_path)
+    docker_compose_up(path)
+
+
+def setup_args() -> argparse.Namespace:
+    """Setup and parse the cmdline arguments
+
+        Returns: The arguments parsed
+
+    """
+    parser = argparse.ArgumentParser(
+        description="Training Platform Setup Script")
+
+    parser.add_argument("target", action="store", choices=[
+        "all", "ctfd", "rust-server", "challenges"],
+        help="Specify which docker containers should be set up")
+
+    parser.add_argument("-cf", "--challenge-file", action="store",
+                        required=False,
+                        default="./docker/docker-compose.yml.tp",
+                        type=str,
+                        help="Specify where to find the `docker-compose.yml` "
+                             "file to build. (Default: ./docker/docker-compose"
+                             ".yml.tp")
+
+    return parser.parse_args()
 
 
 if __name__ == "__main__":
-	chall_path = "./docker/docker-compose.yml.tp"
-	build_containers(chall_path)
-	build_training_platform("./docker-compose.yml", chall_path)
-
+    # challenges_path = "./docker/docker-compose.yml.tp"
+    # build_containers(challenges_path)
+    platform_path = "/docker-compose.yml"
+    args = setup_args()
+    if args.target == "all":
+        build_training_platform(platform_path, args.challenge_file)
+    if args.target == "rust-server":
+        rust_server.setup_rust_server(args.challenge_file)
