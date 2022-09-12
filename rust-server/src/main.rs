@@ -3,6 +3,7 @@ extern crate core;
 use actix_web::{web, web::Data, App, HttpServer, Responder};
 use serde::{Deserialize, Serialize};
 
+mod config;
 mod container;
 mod docker;
 
