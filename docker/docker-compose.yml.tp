@@ -1,6 +1,7 @@
 version: '3'
 
 services:
+# WEB -->
   autoflag:
     container_name: autoflag
     build:
@@ -27,7 +28,7 @@ services:
   python_jail_demo:
     container_name: python_jail_demo
     build:
-      context: ./web/python_jail_demo
+      context: ./misc/python_jail_demo
     networks:
       web_net:
         ipv4_address: 10.10.9.11
@@ -35,7 +36,6 @@ services:
     ports:
       - "1227:1227"
 
-#
 #  umassdining:
 #    container_name: umassdining
 #    build:
@@ -56,6 +56,21 @@ services:
 #        ipv4_address: 10.10.9.4
 #    description: "sus"
 
+# <-- WEB
+
+# --> PWN
+  01_baby_overflow:
+    container_name: 01_baby_overflow
+    build:
+      context: ./pwn/pwn_training/01_baby_overflow/docker_setup
+    networks:
+      pwn_net:
+        ipv4_address: 10.10.8.21
+    description: "01 Baby Overflow"
+    ports:
+      - "7293:7293"
+# <-- PWN
+
 networks:
   web_net:
     driver: bridge
@@ -63,4 +78,9 @@ networks:
       config:
       - gateway: 10.10.9.1
         subnet: 10.10.9.0/24
-
+  pwn_net:
+    driver: bridge
+    ipam:
+      config:
+      - gateway: 10.10.8.1
+        subnet: 10.10.8.0/24
