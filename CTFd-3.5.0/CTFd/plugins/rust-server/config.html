@@ -2,6 +2,9 @@
 
 {% block content %}
 <div id="boxes">
+    <button onclick="await fetch('/api/UMASS/create_challenges', {
+        method: 'POST',
+    })">Add challs</button>
 </div>
 {% endblock %}
 
@@ -21,7 +24,7 @@
             let table = document.createElement('table');
             let tr = document.createElement('tr');
             //Table titles
-            ["Container Name","Description","Start","Stop","Reset"].forEach(name=>{
+            ["Container Name", "Description", "Start", "Stop", "Reset"].forEach(name => {
                 let th = document.createElement('th');
                 th.textContent = name;
                 tr.appendChild(th);
@@ -30,22 +33,22 @@
             table.appendChild(tr);
 
             //Create a row for each lab and populate columns
-            for(const lab of network.labs){
+            for (const lab of network.labs) {
                 tr = document.createElement('tr');
-                [lab.container_name,lab.description,"start","stop","reset"].forEach((text)=>{
+                [lab.container_name, lab.description, "start", "stop", "reset"].forEach((text) => {
                     let td = document.createElement('td');
-                    if(text=="start" || text=="stop" || text=="reset"){
+                    if (text == "start" || text == "stop" || text == "reset") {
                         let button = document.createElement('button');
-                        button.onclick = async ()=>{
-                            await fetch(`/api/UMASS/${text}_box`,{
-                                method:"POST",
-                                headers:{
-                                    'Content-Type':'application/json'
+                        button.onclick = async () => {
+                            await fetch(`/api/UMASS/${text}_box`, {
+                                method: "POST",
+                                headers: {
+                                    'Content-Type': 'application/json'
                                 },
                                 body: JSON.stringify({
-                                    "container_name":lab.container_name
+                                    "container_name": lab.container_name
                                 })
-                                
+
                             })
                         }
                         button.textContent = text;

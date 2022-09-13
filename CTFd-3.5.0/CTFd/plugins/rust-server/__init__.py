@@ -115,7 +115,8 @@ def load(app):
         if not is_admin():
             return {"Data": "Invalid Perms"}, 403
 
-        # API request to get boxes
-        r1 = requests.get('http://127.0.0.1:4000/api/UMASS/get_boxes')
+        data = get_boxes()
 
-        data = r1.json
+        # Create a challenge
+        r_create = requests.get("127.0.0.1:4000/admin/challenges/new.html")
+        print(r_create)
