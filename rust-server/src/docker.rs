@@ -1,42 +1,19 @@
-use std::borrow::Cow;
-use std::process::Command;
-
 use bollard::container::{RestartContainerOptions, StartContainerOptions};
 use bollard::ClientVersion;
 use bollard::Docker;
+use crate::config::{Config, read_config};
 
 #[derive(Debug, Clone)]
 pub struct DockerController {
     docker_daemon: Docker,
 }
 
-/// Get the version of Docker Engine API for connecting to remote Docker Daemon
-pub fn get_docker_api_version() -> ClientVersion {
-    let output: Vec<u8> = Command::new("sh")
-        .arg("docker")
-        .arg("version")
-        .output()
-        .expect("docker version failed to execute")
-        .stdout;
-
-    // Find the index of where the Docker Engine API version is listed
-    let api_index: usize = String::from_utf8(output.clone())
-        .expect("Invalid UTF8")
-        .find("API version")
-        .unwrap();
-
-    // Get minor version first, since major requires move of `output`
-    let minor_version_str: Cow<str> =
-        String::from_utf8_lossy(&output[api_index + 21..api_index + 21 + 2]);
-    let minor_version: usize = String::from(minor_version_str).parse::<usize>().unwrap();
-
-    // Get major version
-    let major_version_char: char = output[api_index + 19] as char;
-    let major_version: usize = major_version_char.to_digit(10).unwrap() as usize;
+fn get_docker_api_version() -> ClientVersion {
+    let config_info: Config = read_config().unwrap();
 
     ClientVersion {
-        major_version,
-        minor_version,
+        major_version: config_info.docker_api_version_major,
+        minor_version: config_info.docker_api_version_minor,
     }
 }
 

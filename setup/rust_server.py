@@ -33,8 +33,8 @@ def generate_config(config_file: str):
     client = docker.from_env()
     api_version = client.version()["Components"][0]["Details"]["ApiVersion"]
     config = {
-        "API_VERSION_MAJOR": api_version[0],
-        "API_VERSION_MINOR": api_version[2:],
+        "docker_api_version_major": int(api_version[0]),
+        "docker_api_version_minor": int(api_version[2:]),
     }
     with open(config_file, "w") as server_config:
         json.dump(config, server_config)
