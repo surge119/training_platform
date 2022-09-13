@@ -28,7 +28,7 @@ services:
   python_jail_demo:
     container_name: python_jail_demo
     build:
-      context: ./web/python_jail_demo
+      context: ./misc/python_jail_demo
     networks:
       web_net:
         ipv4_address: 10.10.9.11
