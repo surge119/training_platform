@@ -60,7 +60,7 @@ services:
 
 # --> PWN
   01_baby_overflow:
-    container_name: baby_overflow
+    container_name: 01_baby_overflow
     build:
       context: ./pwn/pwn_training/01_baby_overflow/docker_setup
     networks:
