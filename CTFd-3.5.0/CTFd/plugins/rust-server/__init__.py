@@ -109,7 +109,7 @@ def load(app):
         })
         return {"success": r1.json() is True, "Data": r1.text}, 200
 
-    @app.route("/api/UMASS/create_challenges", method=['POST'])
+    @app.route("/api/UMASS/create_challenges", methods=['POST'])
     @bypass_csrf_protection
     def create_challenges():
         if not is_admin():
