@@ -135,7 +135,7 @@ def setup_args() -> argparse.Namespace:
         description="Training Platform Setup Script")
 
     parser.add_argument("target", action="store", choices=[
-        "all", "ctfd", "rust-server", "challenges"],
+        "all", "ctfd", "rust-server", "challenges", "rust-server-config"],
         help="Specify which docker containers should be set up")
 
     parser.add_argument("-cf", "--challenge-file", action="store",
@@ -160,3 +160,5 @@ if __name__ == "__main__":
         rust_server.setup_rust_server(args.challenge_file)
     elif args.target == "challenges":
         build_containers(challenges_path)
+    elif args.target == "rust-server-config":
+        rust_server.setup_rust_server(challenges_path)
