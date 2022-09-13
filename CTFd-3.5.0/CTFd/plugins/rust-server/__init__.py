@@ -118,5 +118,5 @@ def load(app):
         data = get_boxes()
 
         # Create a challenge
-        r_create = requests.get("127.0.0.1:4000/admin/challenges/new")
+        r_create = requests.post("127.0.0.1:4000/admin/challenges/new")
         print(r_create)
