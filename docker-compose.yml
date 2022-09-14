@@ -7,7 +7,7 @@ services:
       file: CTFd-3.5.0/docker-compose.yml
       service: ctfd
     ports:
-      - "4000:4000"
+      - "80:4000"
 
   nginx:
     extends:
