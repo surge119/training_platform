@@ -4,6 +4,30 @@ services:
   ctfd:
     extends:
       file: CTFd-3.5.0/docker-compose.yml
+      service: ctfd
+    ports:
+      - "4000:4000"
+
+  nginx:
+    extends:
+      file: CTFd-3.5.0/docker-compose.yml
+      service: nginx
+    ports:
+      - "4000:4000"
+
+  db:
+    extends:
+      file: CTFd-3.5.0/docker-compose.yml
+      service: db
+    ports:
+      - "4000:4000"
+
+  cache:
+    extends:
+      file: CTFd-3.5.0/docker-compose.yml
+      service: cache
+    ports:
+      - "4000:4000"
 
   rust-server:
     build:
