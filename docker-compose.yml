@@ -2,15 +2,8 @@ version: '3'
 
 services:
   ctfd:
-    build:
-      context: ./CTFd-3.5.0/
-    depends_on:
-      - rust-server
-    networks:
-      training_platform:
-        ipv4_address: 10.10.10.5
-    ports:
-      - "4000:4000"
+    extends:
+      file: CTFd-3.5.0/docker-compose.yml
 
   rust-server:
     build:
@@ -25,4 +18,3 @@ networks:
     ipam:
       config:
         - subnet: 10.10.10.0/24
-
