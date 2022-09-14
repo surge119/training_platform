@@ -1,37 +1,28 @@
 version: '3'
 
 services:
-  ctfd:
-    env_file:
-      - setup.env/ctfd.env
   # CTFd -->
-  # ctfd:
-  #   extends:
-  #     file: CTFd-3.5.0/docker-compose.yml
-  #     service: ctfd
-  #   ports:
-  #     - "4000:4000"
+  ctfd:
+    extends:
+      file: CTFd-3.5.0/docker-compose.yml
+      service: ctfd
+    ports:
+      - "4000:4000"
 
-  # nginx:
-  #   extends:
-  #     file: CTFd-3.5.0/docker-compose.yml
-  #     service: nginx
-  #   ports:
-  #     - "4000:4000"
+  nginx:
+    extends:
+      file: CTFd-3.5.0/docker-compose.yml
+      service: nginx
 
-  # db:
-  #   extends:
-  #     file: CTFd-3.5.0/docker-compose.yml
-  #     service: db
-  #   ports:
-  #     - "4000:4000"
+  db:
+    extends:
+      file: CTFd-3.5.0/docker-compose.yml
+      service: db
 
-  # cache:
-  #   extends:
-  #     file: CTFd-3.5.0/docker-compose.yml
-  #     service: cache
-  #   ports:
-  #     - "4000:4000"
+  cache:
+    extends:
+      file: CTFd-3.5.0/docker-compose.yml
+      service: cache
 
   # <-- CTFd
 
@@ -49,6 +40,6 @@ networks:
       config:
         - subnet: 10.10.10.0/24
   # CTFd
-  # default:
-  # internal:
-  #   internal: true
+  default:
+  internal:
+    internal: true
