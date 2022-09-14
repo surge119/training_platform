@@ -1,6 +1,7 @@
 version: '3'
 
 services:
+  # CTFd -->
   ctfd:
     extends:
       file: CTFd-3.5.0/docker-compose.yml
@@ -29,6 +30,8 @@ services:
     ports:
       - "4000:4000"
 
+  # <-- CTFd
+
   rust-server:
     build:
       context: ./rust-server/
@@ -42,3 +45,7 @@ networks:
     ipam:
       config:
         - subnet: 10.10.10.0/24
+  # CTFd
+  default:
+  internal:
+    internal: true
