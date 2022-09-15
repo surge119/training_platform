@@ -12,6 +12,7 @@ services:
       file: CTFd-3.5.0/docker-compose.yml
       service: nginx
     volumes:
+      - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
     ports:
       - 443:443
@@ -30,6 +31,7 @@ services:
   certbot:
     image: certbot/certbot
     volumes:
+      - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
 
   # <-- CTFd
