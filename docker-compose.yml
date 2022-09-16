@@ -6,14 +6,21 @@ services:
     extends:
       file: CTFd-3.5.0/docker-compose.yml
       service: ctfd
+    environment:
+      VIRTUAL_HOST=test.training.umasscybersec.org
+      VIRTUAL_PORT=8000
+      LETSENCRYPT_HOST=test.training.umasscybersec.org
+      LETSENCRYPT_EMAIL=umasscybersec@gmail.com
 
   nginx:
     extends:
       file: CTFd-3.5.0/docker-compose.yml
       service: nginx
     volumes:
-      - ./certbot/conf:/etc/letsencrypt
-      - ./certbot/www:/var/www/certbot
+      - certs:/etc/nginx/certs
+      - vhost:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+      - /var/run/docker.sock:/tmp/docker.sock:ro
     ports:
       - 443:443
 
@@ -27,12 +34,16 @@ services:
       file: CTFd-3.5.0/docker-compose.yml
       service: cache
 
-  # certbot for https
-  certbot:
-    image: certbot/certbot
+  # For https
+  acme-companion:
+    image: nginxproxy/acme-companion
     volumes:
-      - ./certbot/conf:/etc/letsencrypt
-      - ./certbot/www:/var/www/certbot
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - acme:/etc/acme.sh
+    volumes_from:
+      - nginx
+    environment:
+      DEFAULT_EMAIL=umasscybersec@gmail.com
 
   # <-- CTFd
 
