@@ -42,6 +42,22 @@ services:
       training_platform:
         ipv4_address: 10.10.10.2
 
+  # VPN
+  wireguard:
+    image: linuxserver/wireguard
+    environment:
+      - TZ=US/Boston
+      # - SERVERURL=example.org
+      - PEERS=1
+      - ALLOWEDIPS=10.10.10.2
+      - /path/to/appdata/config:/config
+      - /lib/modules:/lib/modules
+    ports:
+      - 51820:51820/udp
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+    restart: unless-stopped
+
 networks:
   training_platform:
     driver: bridge
