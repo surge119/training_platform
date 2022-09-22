@@ -45,6 +45,9 @@ services:
   # VPN
   wireguard:
     image: linuxserver/wireguard
+    cap_add:
+      - NET_ADD
+      - SYS_MODULE
     environment:
       - TZ=US/Boston
       # - SERVERURL=example.org
