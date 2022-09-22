@@ -46,7 +46,7 @@ services:
   wireguard:
     image: linuxserver/wireguard
     cap_add:
-      - NET_ADD
+      - NET_ADMIN
       - SYS_MODULE
     environment:
       - TZ=US/Boston
