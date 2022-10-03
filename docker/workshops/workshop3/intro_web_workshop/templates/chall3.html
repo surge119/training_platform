@@ -1,0 +1,34 @@
+{% include "topbar.html" %}
+<div style="text-align: center;">
+    <h1>
+        Challenge 3: Ping an IP!
+    </h1>
+    <br>
+    <b>Let's ping: </b><input id="ip_to_ping" type="text" placeholder="google.com"> <button id="send_ip">Send!</button>
+    <br>
+    <div>
+        <b>Response</b>
+        <p id="resp">
+            {{resp}}
+        </p>
+    </div>
+</div>
+<script>
+    console.log("Executed")
+    document.getElementById("send_ip").onclick=async ()=>{
+        document.getElementById("resp").innerText = `Pinging ${document.getElementById("ip_to_ping").value}`
+        let resp = await fetch("/chall3", {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            redirect: 'follow',
+            referrerPolicy: 'no-referrer', 
+            body: JSON.stringify({
+                "ip_to_ping":document.getElementById("ip_to_ping").value
+            })
+        });
+        document.getElementById("resp").innerText = await resp.text();
+    }
+    
+</script>
