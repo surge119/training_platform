@@ -6,6 +6,9 @@ services:
     extends:
       file: CTFd-3.5.0/docker-compose.yml
       service: ctfd
+    networks:
+      training_platform:
+        ipv4_address: 10.10.10.5
 
   nginx:
     extends:
