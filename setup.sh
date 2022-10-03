@@ -13,9 +13,7 @@ sudo systemctl stop docker
 sudo systemctl stop docker.socket
 
 # Add current user to docker group
-#sudo usermod -aG docker $(whomai)
-# For Azure
-sudo usermod -aG docker azureuser
+sudo usermod -aG docker $(whoami)
 
 # Start docker daemon and listen on 172.17.0.1 (docker ip)
 sudo dockerd -H unix:///var/run/docker.sock -H tcp://172.17.0.1 > dockerd-logs &
