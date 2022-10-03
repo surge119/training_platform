@@ -76,10 +76,14 @@ services:
     container_name: web_workshop
     build:
       context: ./workshops/workshop3/intro_web_workshop
+    networks:
+      web_net:
+        ipv4_address: 10.10.9.11
     description: "Web Workshop"
     ports:
       - "3080:80"
 # <-- Intro to Web
+
 networks:
   web_net:
     driver: bridge
