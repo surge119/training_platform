@@ -1,0 +1,107 @@
+{% extends "admin/base.html" %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block content %}
+
+<script src="/plugins/challenge-manager/assets/js/challengeManager.js"></script>
+
+<div class="modal fade" id="editChallenge" tabindex="-1" role="dialog" aria-labelledby="editChallengeLabel"
+    aria-hidden="false">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h5 class="modal-title w-100" id="editChallengeLabel">Edit Challenge(s)</h5>
+            </div>
+            <div class="modal-body">
+                <div class="input-group mb-2">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text" for="challengeCategory">Challenge Category</label>
+                    </div>
+                    <input type="text" id="challengeCategory" class="form-control" placeholder="">
+                </div>
+
+                <div class="input-group mb-2">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text" for="challengeType">Challenge Type</label>
+                    </div>
+                    <select class="custom-select" id="challengeType">
+                        <option value="standard">Standard</option>
+                        <option value="dynamic">Dynamic</option>
+                    </select>
+                </div>
+
+                <div class="input-group mb-2">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text" for="challengeValue">Challenge Value</label>
+                    </div>
+                    <input type="text" id="challengeValue" class="form-control" placeholder="">
+                </div>
+
+                <div class="text-center w-100">
+                    <button class="btn btn-primary" id="updateChallenges" type="submit" data-dismiss="modal">Update
+                        Challenges</button>
+                </div>
+            </div>
+            <div class="modal-footer">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="p-0 m-0">
+    <div class="container-fluid">
+        <div class="row text-center">
+            <div class="col-sm">
+            </div>
+            <div class="col-sm">
+                <h3>Challenge Manager Plugin</h3>
+            </div>
+            <div class="col-sm p-0 m-0">
+                <button type="button" class="btn btn-primary float-right h-100" data-toggle="modal"
+                    data-target="#editChallenge">
+                    Edit Challenges
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <table class="table table-striped">
+            <thead class="thead-light">
+                <tr>
+                    <th>
+                        <div>
+                            <input type="checkbox" id="selectAll">
+                        </div>
+                    </th>
+                    <th scope="col">Id</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Value</th>
+                    <th scope="col">Type</th>
+                    <th scope="col">Category</th>
+                </tr>
+            </thead>
+            <tbody id="challenges">
+                {% for challenge in challenges %}
+                <tr data-challenge="{{ challenges[challenge].id }}">
+                    <th>
+                        <div>
+                            <input class="challCheckbox" type="checkbox" id="{{ challenges[challenge].id }}">
+                        </div>
+                    </th>
+                    <th id="challenge_id" scope="row">{{ challenges[challenge].id }}</th>
+                    <td id="name">{{ challenges[challenge].name }}</td>
+                    <td id="value">{{ challenges[challenge].value }}</td>
+                    <td id="type">{{ challenges[challenge].type }}</td>
+                    <td id="category">{{ challenges[challenge].category }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

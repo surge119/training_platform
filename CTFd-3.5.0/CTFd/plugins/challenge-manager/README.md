@@ -1,0 +1,1 @@
+Plugin to manage challenges - upload challenges automatically and change between standard and dynamic
