@@ -38,12 +38,14 @@ services:
 
   # <-- CTFd
 
-  rust-server:
-    build:
-      context: ./rust-server/
-    networks:
-      training_platform:
-        ipv4_address: 10.10.10.2
+  # rust-server:
+  #   build:
+  #     context: ./rust-server/
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #   networks:
+  #     training_platform:
+  #       ipv4_address: 10.10.10.2
 
 networks:
   training_platform:
